@@ -4,8 +4,10 @@ import (
 	"context"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/eyebluecn/sc-misc/src/common/errs"
-	"github.com/eyebluecn/sc-misc/src/converter/api_conv"
-	"github.com/eyebluecn/sc-misc/src/converter/model_conv"
+	"github.com/eyebluecn/sc-misc/src/converter/do2dto"
+	"github.com/eyebluecn/sc-misc/src/converter/po2do"
+	"github.com/eyebluecn/sc-misc/src/converter/universal2dto"
+	"github.com/eyebluecn/sc-misc/src/model/query"
 	"github.com/eyebluecn/sc-misc/src/repository/repo"
 	"github.com/eyebluecn/sc-subscription-idl/kitex_gen/sc_subscription_api"
 )
@@ -39,8 +41,8 @@ func (receiver SubscriptionPage) CheckParam(ctx context.Context, request *sc_sub
 
 // 参数校验后的真实处理
 func (receiver SubscriptionPage) doHandle(ctx context.Context, request sc_subscription_api.SubscriptionPageRequest) (r *sc_subscription_api.SubscriptionPageResponse, err error) {
-	req := repo.SubscriptionPageRequest{
-		Status:    model_conv.ConvertSubscriptionStatusPtr(request.Status),
+	req := query.SubscriptionPageQuery{
+		Status:    po2do.ConvertSubscriptionStatusPtr(request.Status),
 		ReaderId:  request.ReaderId,
 		ColumnIds: request.ColumnIds,
 		OrderId:   request.OrderId,
@@ -53,8 +55,8 @@ func (receiver SubscriptionPage) doHandle(ctx context.Context, request sc_subscr
 	}
 
 	r = &sc_subscription_api.SubscriptionPageResponse{
-		Data:       api_conv.ConvertSubscriptionDTOs(list),
-		Pagination: api_conv.ConvertPagination(pagination),
+		Data:       do2dto.ConvertSubscriptionDTOs(list),
+		Pagination: universal2dto.ConvertPagination(pagination),
 	}
 
 	return r, nil

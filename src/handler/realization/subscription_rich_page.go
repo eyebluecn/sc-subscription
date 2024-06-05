@@ -5,8 +5,9 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/eyebluecn/sc-misc/src/application"
 	"github.com/eyebluecn/sc-misc/src/common/errs"
-	"github.com/eyebluecn/sc-misc/src/converter/api_conv"
-	"github.com/eyebluecn/sc-misc/src/repository/repo"
+	"github.com/eyebluecn/sc-misc/src/converter/do2dto"
+	"github.com/eyebluecn/sc-misc/src/converter/universal2dto"
+	"github.com/eyebluecn/sc-misc/src/model/query"
 	"github.com/eyebluecn/sc-subscription-idl/kitex_gen/sc_subscription_api"
 )
 
@@ -41,19 +42,19 @@ func (receiver SubscriptionRichPage) CheckParam(ctx context.Context, request *sc
 // 参数校验后的真实处理
 func (receiver SubscriptionRichPage) doHandle(ctx context.Context, request sc_subscription_api.SubscriptionRichPageRequest) (r *sc_subscription_api.SubscriptionRichPageResponse, err error) {
 
-	repoRequest := repo.SubscriptionPageRequest{
+	repoRequest := query.SubscriptionPageQuery{
 		ReaderId: request.ReaderId,
 		PageNum:  request.PageNum,
 		PageSize: request.PageSize,
 	}
-	richSubscriptions, pagination, err := application.NewSubscriptionReadApp().RichSubscriptionPage(ctx, repoRequest)
+	richSubscriptions, pagination, err := application.NewSubscriptionReadAppSvc().RichSubscriptionPage(ctx, repoRequest)
 	if err != nil {
 		return nil, err
 	}
 
 	r = &sc_subscription_api.SubscriptionRichPageResponse{
-		Data:       api_conv.ConvertRichSubscriptionDTOs(richSubscriptions),
-		Pagination: api_conv.ConvertPagination(pagination),
+		Data:       do2dto.ConvertRichSubscriptionDTOs(richSubscriptions),
+		Pagination: universal2dto.ConvertPagination(pagination),
 	}
 
 	return r, nil

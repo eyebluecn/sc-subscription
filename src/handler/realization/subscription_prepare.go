@@ -5,7 +5,7 @@ import (
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/eyebluecn/sc-misc/src/application"
 	"github.com/eyebluecn/sc-misc/src/common/errs"
-	"github.com/eyebluecn/sc-misc/src/converter/api_conv"
+	"github.com/eyebluecn/sc-misc/src/converter/do2dto"
 	"github.com/eyebluecn/sc-subscription-idl/kitex_gen/sc_subscription_api"
 )
 
@@ -48,14 +48,14 @@ func (receiver SubscriptionPrepare) CheckParam(ctx context.Context, request *sc_
 // 参数校验后的真实处理
 func (receiver SubscriptionPrepare) doHandle(ctx context.Context, request sc_subscription_api.SubscriptionPrepareRequest) (r *sc_subscription_api.SubscriptionPrepareResponse, err error) {
 
-	prepareSubscribeInfo, err := application.NewSubscriptionWriteApp().PrepareSubscribe(ctx, request.ReaderId, request.ColumnId, request.PayMethod)
+	prepareSubscribeInfo, err := application.NewSubscriptionWriteAppSvc().PrepareSubscribe(ctx, request.ReaderId, request.ColumnId, request.PayMethod)
 	if err != nil {
 		return nil, err
 	}
 
 	r = &sc_subscription_api.SubscriptionPrepareResponse{
 		Data: &sc_subscription_api.SubscriptionPrepareData{
-			OrderDTO:           api_conv.ConvertOrderDTO(prepareSubscribeInfo.Order),
+			OrderDTO:           do2dto.ConvertOrderDTO(prepareSubscribeInfo.Order),
 			ThirdTransactionNo: prepareSubscribeInfo.ThirdTransactionNo,
 			NonceStr:           prepareSubscribeInfo.NonceStr,
 		},

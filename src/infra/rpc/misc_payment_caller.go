@@ -4,17 +4,16 @@ import (
 	"context"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/eyebluecn/sc-misc-idl/kitex_gen/sc_misc_api"
-	"github.com/eyebluecn/sc-misc/src/common/config"
-	"github.com/eyebluecn/sc-misc/src/common/enums"
 	"github.com/eyebluecn/sc-misc/src/common/errs"
-	"github.com/eyebluecn/sc-misc/src/converter/vo_conv"
-	"github.com/eyebluecn/sc-misc/src/model/info_model"
-	"github.com/eyebluecn/sc-misc/src/model/vo_model"
+	"github.com/eyebluecn/sc-misc/src/converter/dto2vo"
+	"github.com/eyebluecn/sc-misc/src/infra/rpc/config"
+	"github.com/eyebluecn/sc-misc/src/model/info"
+	"github.com/eyebluecn/sc-misc/src/model/vo"
 )
 
 // 根据id获取支付单，可能为空。
 // 如果err==nil，则PaymentVO!=nil
-func (receiver MiscCaller) PaymentQueryById(ctx context.Context, paymentId int64) (*vo_model.PaymentVO, error) {
+func (receiver MiscCaller) PaymentQueryById(ctx context.Context, paymentId int64) (*vo.PaymentVO, error) {
 	request := &sc_misc_api.PaymentQueryByIdRequest{
 		PaymentId: paymentId,
 	}
@@ -24,27 +23,27 @@ func (receiver MiscCaller) PaymentQueryById(ctx context.Context, paymentId int64
 		return nil, err
 	}
 
-	paymentVO := vo_conv.ConvertPaymentVO(response.Data)
+	paymentVO := dto2vo.ConvertPaymentVO(response.Data)
 
 	return paymentVO, nil
 }
 
 // 根据id获取支付单，如果为nil，返回报错。
-func (receiver MiscCaller) PaymentCheckById(ctx context.Context, paymentId int64) (*vo_model.PaymentVO, error) {
+func (receiver MiscCaller) PaymentCheckById(ctx context.Context, paymentId int64) (*vo.PaymentVO, error) {
 	paymentVO, err := receiver.PaymentQueryById(ctx, paymentId)
 	if err != nil {
 		return nil, err
 	}
 
 	if paymentVO == nil {
-		return nil, errs.CodeErrorf(enums.StatusCodeNotFound, "id=%v的记录不存在", paymentId)
+		return nil, errs.CodeErrorf(errs.StatusCodeNotFound, "id=%v的记录不存在", paymentId)
 	}
 
 	return paymentVO, nil
 }
 
 // 准备支付
-func (receiver MiscCaller) PaymentPrepare(ctx context.Context, paymentId int64) (*info_model.PaymentPrepareInfo, error) {
+func (receiver MiscCaller) PaymentPrepare(ctx context.Context, paymentId int64) (*info.PaymentPrepareInfo, error) {
 	request := &sc_misc_api.PaymentPrepareRequest{
 		PaymentId: paymentId,
 	}
@@ -57,9 +56,9 @@ func (receiver MiscCaller) PaymentPrepare(ctx context.Context, paymentId int64) 
 		return nil, errs.BadRequestErrorf("response data is nil")
 	}
 
-	paymentVO := vo_conv.ConvertPaymentVO(response.Data.PaymentDTO)
+	paymentVO := dto2vo.ConvertPaymentVO(response.Data.PaymentDTO)
 
-	resp := &info_model.PaymentPrepareInfo{
+	resp := &info.PaymentPrepareInfo{
 		PaymentVO:          paymentVO,
 		ThirdTransactionNo: response.Data.ThirdTransactionNo,
 		NonceStr:           response.Data.NonceStr,
@@ -72,7 +71,7 @@ func (receiver MiscCaller) PaymentPrepare(ctx context.Context, paymentId int64) 
 func (receiver MiscCaller) PaymentCreate(ctx context.Context,
 	orderNo string,
 	method string,
-	amount int64) (*info_model.PaymentPrepareInfo, error) {
+	amount int64) (*info.PaymentPrepareInfo, error) {
 	request := &sc_misc_api.PaymentCreateRequest{
 		OrderNo: orderNo,
 		Method:  method,
@@ -87,9 +86,9 @@ func (receiver MiscCaller) PaymentCreate(ctx context.Context,
 		return nil, errs.BadRequestErrorf("response data is nil")
 	}
 
-	paymentVO := vo_conv.ConvertPaymentVO(response.Data.PaymentDTO)
+	paymentVO := dto2vo.ConvertPaymentVO(response.Data.PaymentDTO)
 
-	resp := &info_model.PaymentPrepareInfo{
+	resp := &info.PaymentPrepareInfo{
 		PaymentVO:          paymentVO,
 		ThirdTransactionNo: response.Data.ThirdTransactionNo,
 		NonceStr:           response.Data.NonceStr,

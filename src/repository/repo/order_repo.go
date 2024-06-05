@@ -5,12 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/eyebluecn/sc-misc/src/common/config"
-	"github.com/eyebluecn/sc-misc/src/common/enums"
 	"github.com/eyebluecn/sc-misc/src/common/errs"
-	"github.com/eyebluecn/sc-misc/src/converter/db_model_conv"
-	"github.com/eyebluecn/sc-misc/src/converter/model_conv"
-	"github.com/eyebluecn/sc-misc/src/model"
+	"github.com/eyebluecn/sc-misc/src/converter/do2po"
+	"github.com/eyebluecn/sc-misc/src/converter/po2do"
+	"github.com/eyebluecn/sc-misc/src/model/do"
+	"github.com/eyebluecn/sc-misc/src/model/do/enums"
+	"github.com/eyebluecn/sc-misc/src/model/query"
+	"github.com/eyebluecn/sc-misc/src/model/universal"
+	"github.com/eyebluecn/sc-misc/src/repository/config"
 	"github.com/eyebluecn/sc-misc/src/repository/dao"
 	"gorm.io/gen"
 	"gorm.io/gorm"
@@ -27,15 +29,15 @@ func NewOrderRepo() OrderRepo {
 // 新建一个Order
 func (receiver OrderRepo) Insert(
 	ctx context.Context,
-	payment *model.Order,
-) (*model.Order, error) {
-	table := dao.Use(config.DB).OrderDO
+	payment *do.OrderDO,
+) (*do.OrderDO, error) {
+	table := dao.Use(config.DB).OrderPO
 
 	//时间置为当前
 	payment.CreateTime = time.Now()
 	payment.UpdateTime = time.Now()
 
-	paymentDO := db_model_conv.ConvertOrderDO(payment)
+	paymentDO := do2po.ConvertOrderPO(payment)
 
 	err := table.WithContext(ctx).Debug().Create(paymentDO)
 	if err != nil {
@@ -43,16 +45,16 @@ func (receiver OrderRepo) Insert(
 		return nil, err
 	}
 
-	return model_conv.ConvertOrder(paymentDO), nil
+	return po2do.ConvertOrderDO(paymentDO), nil
 }
 
 // 按照分页查询 1基
 func (receiver OrderRepo) Page(
 	ctx context.Context,
-	req OrderPageRequest,
-) (list []*model.Order, pagination *model.Pagination, err error) {
+	req query.OrderPageQuery,
+) (list []*do.OrderDO, pagination *universal.Pagination, err error) {
 
-	table := dao.Use(config.DB).OrderDO
+	table := dao.Use(config.DB).OrderPO
 	conditions := make([]gen.Condition, 0)
 
 	if req.ReaderId != nil {
@@ -63,7 +65,7 @@ func (receiver OrderRepo) Page(
 	}
 
 	if len(req.Statuses) != 0 {
-		status := db_model_conv.OrderStatusesToStorage(req.Statuses)
+		status := do2po.ConvertOrderStatuses(req.Statuses)
 		conditions = append(conditions, table.Status.In(status...))
 	}
 
@@ -90,20 +92,20 @@ func (receiver OrderRepo) Page(
 		return nil, nil, err
 	}
 
-	pagination = &model.Pagination{
+	pagination = &universal.Pagination{
 		PageNum:    req.PageNum,
 		PageSize:   req.PageSize,
 		TotalItems: total,
 	}
-	return model_conv.ConvertOrders(pageData), pagination, nil
+	return po2do.ConvertOrderDOs(pageData), pagination, nil
 }
 
 // 根据订单号查询订单 找不到返回nil.
 func (receiver OrderRepo) QueryByNo(
 	ctx context.Context,
 	no string,
-) (*model.Order, error) {
-	table := dao.Use(config.DB).OrderDO
+) (*do.OrderDO, error) {
+	table := dao.Use(config.DB).OrderPO
 	conditions := make([]gen.Condition, 0)
 
 	conditions = append(conditions, table.No.Eq(no))
@@ -120,14 +122,14 @@ func (receiver OrderRepo) QueryByNo(
 		}
 		return nil, err
 	}
-	return model_conv.ConvertOrder(orderDO), nil
+	return po2do.ConvertOrderDO(orderDO), nil
 }
 
 // 根据订单号查询订单 找不到返回nil.
 func (receiver OrderRepo) CheckByNo(
 	ctx context.Context,
 	no string,
-) (*model.Order, error) {
+) (*do.OrderDO, error) {
 	order, err := receiver.QueryByNo(ctx, no)
 	if err != nil {
 		return nil, err
@@ -144,16 +146,16 @@ func (receiver OrderRepo) QueryByReaderIdAndColumnIdAndStatuses(
 	ctx context.Context,
 	readerId int64,
 	columnId int64,
-	statuses []model.OrderStatus,
-) ([]*model.Order, error) {
-	table := dao.Use(config.DB).OrderDO
+	statuses []enums.OrderStatus,
+) ([]*do.OrderDO, error) {
+	table := dao.Use(config.DB).OrderPO
 	conditions := make([]gen.Condition, 0)
 
 	conditions = append(conditions, table.ReaderID.Eq(readerId))
 	conditions = append(conditions, table.ColumnID.Eq(columnId))
 
 	if len(statuses) != 0 {
-		status := db_model_conv.OrderStatusesToStorage(statuses)
+		status := do2po.ConvertOrderStatuses(statuses)
 		conditions = append(conditions, table.Status.In(status...))
 	}
 
@@ -169,22 +171,22 @@ func (receiver OrderRepo) QueryByReaderIdAndColumnIdAndStatuses(
 		}
 		return nil, err
 	}
-	return model_conv.ConvertOrders(orderList), nil
+	return po2do.ConvertOrderDOs(orderList), nil
 }
 
 // 更新状态
 func (receiver OrderRepo) UpdateStatus(
 	ctx context.Context,
 	orderId int64,
-	orderStatus model.OrderStatus,
+	orderStatus enums.OrderStatus,
 ) (int64, error) {
-	table := dao.Use(config.DB).OrderDO
+	table := dao.Use(config.DB).OrderPO
 
 	conditions := make([]gen.Condition, 0)
 
 	conditions = append(conditions, table.ID.Eq(orderId))
 
-	dbOrderStatus := db_model_conv.OrderStatusToStorage(orderStatus)
+	dbOrderStatus := do2po.ConvertOrderStatus(orderStatus)
 
 	info, err := table.WithContext(ctx).Debug().Where(conditions...).Update(table.Status, dbOrderStatus)
 	if err != nil {
@@ -196,11 +198,11 @@ func (receiver OrderRepo) UpdateStatus(
 }
 
 // 按照id查找，找不到返回nil
-func (receiver OrderRepo) FindById(
+func (receiver OrderRepo) QueryById(
 	ctx context.Context,
 	id int64,
-) (*model.Order, error) {
-	table := dao.Use(config.DB).OrderDO
+) (*do.OrderDO, error) {
+	table := dao.Use(config.DB).OrderPO
 
 	conditions := make([]gen.Condition, 0)
 
@@ -218,20 +220,20 @@ func (receiver OrderRepo) FindById(
 		}
 		return nil, err
 	}
-	return model_conv.ConvertOrder(orderDO), nil
+	return po2do.ConvertOrderDO(orderDO), nil
 }
 
 // 按照id查找，找不到返回err
 func (receiver OrderRepo) CheckById(
 	ctx context.Context,
 	id int64,
-) (*model.Order, error) {
-	order, err := receiver.FindById(ctx, id)
+) (*do.OrderDO, error) {
+	order, err := receiver.QueryById(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	if order == nil {
-		return nil, errs.CodeErrorf(enums.StatusCodeNotFound, fmt.Sprintf("id=%d对应的订单不存在", id))
+		return nil, errs.CodeErrorf(errs.StatusCodeNotFound, fmt.Sprintf("id=%d对应的订单不存在", id))
 	}
 	return order, nil
 }
@@ -240,15 +242,15 @@ func (receiver OrderRepo) CheckById(
 func (receiver OrderRepo) QueryByIds(
 	ctx context.Context,
 	ids []int64,
-) (list []*model.Order, err error) {
+) (list []*do.OrderDO, err error) {
 
-	table := dao.Use(config.DB).OrderDO
+	table := dao.Use(config.DB).OrderPO
 	conditions := make([]gen.Condition, 0)
 
 	if len(ids) > 0 {
 		conditions = append(conditions, table.ID.In(ids...))
 	} else {
-		return nil, errs.CodeErrorf(enums.StatusCodeParamsError, "ids列表不能为空")
+		return nil, errs.CodeErrorf(errs.StatusCodeParamsError, "ids列表不能为空")
 	}
 
 	tableDO := table.WithContext(ctx).Debug()
@@ -262,5 +264,5 @@ func (receiver OrderRepo) QueryByIds(
 		return nil, err
 	}
 
-	return model_conv.ConvertOrders(listData), nil
+	return po2do.ConvertOrderDOs(listData), nil
 }

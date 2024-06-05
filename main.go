@@ -7,6 +7,8 @@ import (
 	"github.com/eyebluecn/sc-misc/src/common/config"
 	"github.com/eyebluecn/sc-misc/src/handler"
 	"github.com/eyebluecn/sc-misc/src/infra/mq"
+	config3 "github.com/eyebluecn/sc-misc/src/infra/rpc/config"
+	config2 "github.com/eyebluecn/sc-misc/src/repository/config"
 	"github.com/eyebluecn/sc-subscription-idl/kitex_gen/sc_subscription_api/subscriptionservice"
 	"log"
 	"net"
@@ -16,7 +18,7 @@ import (
 func main() {
 
 	//初始化MySQL
-	config.InitMySQL()
+	config2.DefaultMysqlConfig().Init()
 
 	//初始化MQ
 	mq.InitProducer()
@@ -34,7 +36,7 @@ func main() {
 	)
 
 	//初始化RPC客户端
-	config.InitRpcClient()
+	config3.InitRpcClient()
 
 	err := svr.Run()
 	if err != nil {

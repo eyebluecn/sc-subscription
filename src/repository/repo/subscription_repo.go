@@ -4,11 +4,14 @@ import (
 	"context"
 	"errors"
 	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/eyebluecn/sc-misc/src/common/config"
 	"github.com/eyebluecn/sc-misc/src/common/errs"
-	"github.com/eyebluecn/sc-misc/src/converter/db_model_conv"
-	"github.com/eyebluecn/sc-misc/src/converter/model_conv"
-	"github.com/eyebluecn/sc-misc/src/model"
+	"github.com/eyebluecn/sc-misc/src/converter/do2po"
+	"github.com/eyebluecn/sc-misc/src/converter/po2do"
+	"github.com/eyebluecn/sc-misc/src/model/do"
+	"github.com/eyebluecn/sc-misc/src/model/query"
+	"github.com/eyebluecn/sc-misc/src/model/query/enums"
+	"github.com/eyebluecn/sc-misc/src/model/universal"
+	"github.com/eyebluecn/sc-misc/src/repository/config"
 	"github.com/eyebluecn/sc-misc/src/repository/dao"
 	"gorm.io/gen"
 	"gorm.io/gorm"
@@ -25,15 +28,15 @@ func NewSubscriptionRepo() SubscriptionRepo {
 // 新建一个Subscription
 func (receiver SubscriptionRepo) Insert(
 	ctx context.Context,
-	payment *model.Subscription,
-) (*model.Subscription, error) {
-	table := dao.Use(config.DB).SubscriptionDO
+	payment *do.SubscriptionDO,
+) (*do.SubscriptionDO, error) {
+	table := dao.Use(config.DB).SubscriptionPO
 
 	//时间置为当前
 	payment.CreateTime = time.Now()
 	payment.UpdateTime = time.Now()
 
-	paymentDO := db_model_conv.ConvertSubscriptionDO(payment)
+	paymentDO := do2po.ConvertSubscriptionPO(payment)
 
 	err := table.WithContext(ctx).Debug().Create(paymentDO)
 	if err != nil {
@@ -41,16 +44,16 @@ func (receiver SubscriptionRepo) Insert(
 		return nil, err
 	}
 
-	return model_conv.ConvertSubscription(paymentDO), nil
+	return po2do.ConvertSubscriptionDO(paymentDO), nil
 }
 
 // 按照分页查询 1基
 func (receiver SubscriptionRepo) Page(
 	ctx context.Context,
-	req SubscriptionPageRequest,
-) (list []*model.Subscription, pagination *model.Pagination, err error) {
+	req query.SubscriptionPageQuery,
+) (list []*do.SubscriptionDO, pagination *universal.Pagination, err error) {
 
-	table := dao.Use(config.DB).SubscriptionDO
+	table := dao.Use(config.DB).SubscriptionPO
 	conditions := make([]gen.Condition, 0)
 
 	if !req.CreateTimeGte.IsZero() {
@@ -70,7 +73,7 @@ func (receiver SubscriptionRepo) Page(
 	}
 
 	if req.Status != nil {
-		status := db_model_conv.SubscriptionStatusToStorage(*req.Status)
+		status := do2po.ConvertSubscriptionStatus(*req.Status)
 		conditions = append(conditions, table.Status.Eq(status))
 	}
 
@@ -81,11 +84,11 @@ func (receiver SubscriptionRepo) Page(
 
 	//默认按照创建时间倒序排列
 	orderExpr := table.CreateTime.Desc()
-	if req.OrderBy == OrderByCreateTimeAsc {
+	if req.OrderBy == enums.OrderByCreateTimeAsc {
 		orderExpr = table.CreateTime.Asc()
-	} else if req.OrderBy == OrderByIdDesc {
+	} else if req.OrderBy == enums.OrderByIdDesc {
 		orderExpr = table.CreateTime.Desc()
-	} else if req.OrderBy == OrderByIdAsc {
+	} else if req.OrderBy == enums.OrderByIdAsc {
 		orderExpr = table.CreateTime.Asc()
 	}
 	tableDO = tableDO.Order(orderExpr)
@@ -108,12 +111,12 @@ func (receiver SubscriptionRepo) Page(
 		return nil, nil, err
 	}
 
-	pagination = &model.Pagination{
+	pagination = &universal.Pagination{
 		PageNum:    req.PageNum,
 		PageSize:   req.PageSize,
 		TotalItems: total,
 	}
-	return model_conv.ConvertSubscriptions(pageData), pagination, nil
+	return po2do.ConvertSubscriptionDOs(pageData), pagination, nil
 }
 
 // 查询某个读者和某个专栏的订阅关系。 找不到返回nil.
@@ -121,8 +124,8 @@ func (receiver SubscriptionRepo) QueryByReaderIdAndColumnId(
 	ctx context.Context,
 	readerId int64,
 	columnId int64,
-) (*model.Subscription, error) {
-	table := dao.Use(config.DB).SubscriptionDO
+) (*do.SubscriptionDO, error) {
+	table := dao.Use(config.DB).SubscriptionPO
 	conditions := make([]gen.Condition, 0)
 
 	conditions = append(conditions, table.ReaderID.Eq(readerId))
@@ -140,5 +143,5 @@ func (receiver SubscriptionRepo) QueryByReaderIdAndColumnId(
 		}
 		return nil, err
 	}
-	return model_conv.ConvertSubscription(subscriptionDO), nil
+	return po2do.ConvertSubscriptionDO(subscriptionDO), nil
 }
