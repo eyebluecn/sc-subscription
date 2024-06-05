@@ -1,12 +1,12 @@
-package universal2dto
+package result2dto
 
 import (
-	"github.com/eyebluecn/sc-misc/src/model/universal"
+	"github.com/eyebluecn/sc-misc/src/model/result"
 	"github.com/eyebluecn/sc-subscription-idl/kitex_gen/sc_subscription_base"
 )
 
 // 领域模型转为传输模型
-func ConvertPagination(pagination *universal.Pagination) *sc_subscription_base.Pagination {
+func ConvertPagination(pagination *result.Pagination) *sc_subscription_base.Pagination {
 	if pagination == nil {
 		return nil
 	}

@@ -6,7 +6,7 @@ import (
 	"github.com/eyebluecn/sc-misc/src/application"
 	"github.com/eyebluecn/sc-misc/src/common/errs"
 	"github.com/eyebluecn/sc-misc/src/converter/do2dto"
-	"github.com/eyebluecn/sc-misc/src/converter/universal2dto"
+	"github.com/eyebluecn/sc-misc/src/converter/result2dto"
 	"github.com/eyebluecn/sc-misc/src/model/query"
 	"github.com/eyebluecn/sc-subscription-idl/kitex_gen/sc_subscription_api"
 )
@@ -54,7 +54,7 @@ func (receiver SubscriptionRichPage) doHandle(ctx context.Context, request sc_su
 
 	r = &sc_subscription_api.SubscriptionRichPageResponse{
 		Data:       do2dto.ConvertRichSubscriptionDTOs(richSubscriptions),
-		Pagination: universal2dto.ConvertPagination(pagination),
+		Pagination: result2dto.ConvertPagination(pagination),
 	}
 
 	return r, nil

@@ -11,7 +11,7 @@ import (
 	"github.com/eyebluecn/sc-misc/src/model/do"
 	"github.com/eyebluecn/sc-misc/src/model/do/enums"
 	"github.com/eyebluecn/sc-misc/src/model/query"
-	"github.com/eyebluecn/sc-misc/src/model/universal"
+	"github.com/eyebluecn/sc-misc/src/model/result"
 	"github.com/eyebluecn/sc-misc/src/repository/config"
 	"github.com/eyebluecn/sc-misc/src/repository/dao"
 	"gorm.io/gen"
@@ -52,7 +52,7 @@ func (receiver OrderRepo) Insert(
 func (receiver OrderRepo) Page(
 	ctx context.Context,
 	req query.OrderPageQuery,
-) (list []*do.OrderDO, pagination *universal.Pagination, err error) {
+) (list []*do.OrderDO, pagination *result.Pagination, err error) {
 
 	table := dao.Use(config.DB).OrderPO
 	conditions := make([]gen.Condition, 0)
@@ -92,7 +92,7 @@ func (receiver OrderRepo) Page(
 		return nil, nil, err
 	}
 
-	pagination = &universal.Pagination{
+	pagination = &result.Pagination{
 		PageNum:    req.PageNum,
 		PageSize:   req.PageSize,
 		TotalItems: total,

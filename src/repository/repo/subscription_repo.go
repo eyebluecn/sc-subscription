@@ -10,7 +10,7 @@ import (
 	"github.com/eyebluecn/sc-misc/src/model/do"
 	"github.com/eyebluecn/sc-misc/src/model/query"
 	"github.com/eyebluecn/sc-misc/src/model/query/enums"
-	"github.com/eyebluecn/sc-misc/src/model/universal"
+	"github.com/eyebluecn/sc-misc/src/model/result"
 	"github.com/eyebluecn/sc-misc/src/repository/config"
 	"github.com/eyebluecn/sc-misc/src/repository/dao"
 	"gorm.io/gen"
@@ -51,7 +51,7 @@ func (receiver SubscriptionRepo) Insert(
 func (receiver SubscriptionRepo) Page(
 	ctx context.Context,
 	req query.SubscriptionPageQuery,
-) (list []*do.SubscriptionDO, pagination *universal.Pagination, err error) {
+) (list []*do.SubscriptionDO, pagination *result.Pagination, err error) {
 
 	table := dao.Use(config.DB).SubscriptionPO
 	conditions := make([]gen.Condition, 0)
@@ -111,7 +111,7 @@ func (receiver SubscriptionRepo) Page(
 		return nil, nil, err
 	}
 
-	pagination = &universal.Pagination{
+	pagination = &result.Pagination{
 		PageNum:    req.PageNum,
 		PageSize:   req.PageSize,
 		TotalItems: total,

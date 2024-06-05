@@ -7,7 +7,7 @@ import (
 	"github.com/eyebluecn/sc-misc/src/model/do"
 	"github.com/eyebluecn/sc-misc/src/model/info"
 	"github.com/eyebluecn/sc-misc/src/model/query"
-	"github.com/eyebluecn/sc-misc/src/model/universal"
+	"github.com/eyebluecn/sc-misc/src/model/result"
 	"github.com/eyebluecn/sc-misc/src/model/vo"
 	"github.com/eyebluecn/sc-misc/src/repository/repo"
 )
@@ -19,7 +19,7 @@ func NewSubscriptionReadAppSvc() *SubscriptionReadAppSvc {
 }
 
 // 获取某位读者查看到的订阅列表。
-func (receiver SubscriptionReadAppSvc) RichSubscriptionPage(ctx context.Context, repoRequest query.SubscriptionPageQuery) ([]*info.RichSubscription, *universal.Pagination, error) {
+func (receiver SubscriptionReadAppSvc) RichSubscriptionPage(ctx context.Context, repoRequest query.SubscriptionPageQuery) ([]*info.RichSubscription, *result.Pagination, error) {
 
 	subscriptions, pagination, err := repo.NewSubscriptionRepo().Page(ctx, repoRequest)
 	if err != nil {
