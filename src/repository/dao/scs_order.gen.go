@@ -6,7 +6,6 @@ package dao
 
 import (
 	"context"
-	"github.com/eyebluecn/sc-misc/src/model/po"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -16,35 +15,37 @@ import (
 	"gorm.io/gen/field"
 
 	"gorm.io/plugin/dbresolver"
+
+	"github.com/eyebluecn/sc-misc/src/model/po"
 )
 
-func newOrderDO(db *gorm.DB, opts ...gen.DOOption) orderDO {
-	_orderDO := orderDO{}
+func newOrderPO(db *gorm.DB, opts ...gen.DOOption) orderPO {
+	_orderPO := orderPO{}
 
-	_orderDO.orderDODo.UseDB(db, opts...)
-	_orderDO.orderDODo.UseModel(&po.OrderPO{})
+	_orderPO.orderPODo.UseDB(db, opts...)
+	_orderPO.orderPODo.UseModel(&po.OrderPO{})
 
-	tableName := _orderDO.orderDODo.TableName()
-	_orderDO.ALL = field.NewAsterisk(tableName)
-	_orderDO.ID = field.NewInt64(tableName, "id")
-	_orderDO.CreateTime = field.NewTime(tableName, "create_time")
-	_orderDO.UpdateTime = field.NewTime(tableName, "update_time")
-	_orderDO.No = field.NewString(tableName, "no")
-	_orderDO.ReaderID = field.NewInt64(tableName, "reader_id")
-	_orderDO.ColumnID = field.NewInt64(tableName, "column_id")
-	_orderDO.ColumnQuoteID = field.NewInt64(tableName, "column_quote_id")
-	_orderDO.PaymentID = field.NewInt64(tableName, "payment_id")
-	_orderDO.Price = field.NewInt64(tableName, "price")
-	_orderDO.Status = field.NewInt32(tableName, "status")
+	tableName := _orderPO.orderPODo.TableName()
+	_orderPO.ALL = field.NewAsterisk(tableName)
+	_orderPO.ID = field.NewInt64(tableName, "id")
+	_orderPO.CreateTime = field.NewTime(tableName, "create_time")
+	_orderPO.UpdateTime = field.NewTime(tableName, "update_time")
+	_orderPO.No = field.NewString(tableName, "no")
+	_orderPO.ReaderID = field.NewInt64(tableName, "reader_id")
+	_orderPO.ColumnID = field.NewInt64(tableName, "column_id")
+	_orderPO.ColumnQuoteID = field.NewInt64(tableName, "column_quote_id")
+	_orderPO.PaymentID = field.NewInt64(tableName, "payment_id")
+	_orderPO.Price = field.NewInt64(tableName, "price")
+	_orderPO.Status = field.NewInt32(tableName, "status")
 
-	_orderDO.fillFieldMap()
+	_orderPO.fillFieldMap()
 
-	return _orderDO
+	return _orderPO
 }
 
-// orderDO 订单表
-type orderDO struct {
-	orderDODo orderDODo
+// orderPO 订单表
+type orderPO struct {
+	orderPODo orderPODo
 
 	ALL           field.Asterisk
 	ID            field.Int64  // 主键
@@ -61,17 +62,17 @@ type orderDO struct {
 	fieldMap map[string]field.Expr
 }
 
-func (o orderDO) Table(newTableName string) *orderDO {
-	o.orderDODo.UseTable(newTableName)
+func (o orderPO) Table(newTableName string) *orderPO {
+	o.orderPODo.UseTable(newTableName)
 	return o.updateTableName(newTableName)
 }
 
-func (o orderDO) As(alias string) *orderDO {
-	o.orderDODo.DO = *(o.orderDODo.As(alias).(*gen.DO))
+func (o orderPO) As(alias string) *orderPO {
+	o.orderPODo.DO = *(o.orderPODo.As(alias).(*gen.DO))
 	return o.updateTableName(alias)
 }
 
-func (o *orderDO) updateTableName(table string) *orderDO {
+func (o *orderPO) updateTableName(table string) *orderPO {
 	o.ALL = field.NewAsterisk(table)
 	o.ID = field.NewInt64(table, "id")
 	o.CreateTime = field.NewTime(table, "create_time")
@@ -89,15 +90,15 @@ func (o *orderDO) updateTableName(table string) *orderDO {
 	return o
 }
 
-func (o *orderDO) WithContext(ctx context.Context) *orderDODo { return o.orderDODo.WithContext(ctx) }
+func (o *orderPO) WithContext(ctx context.Context) *orderPODo { return o.orderPODo.WithContext(ctx) }
 
-func (o orderDO) TableName() string { return o.orderDODo.TableName() }
+func (o orderPO) TableName() string { return o.orderPODo.TableName() }
 
-func (o orderDO) Alias() string { return o.orderDODo.Alias() }
+func (o orderPO) Alias() string { return o.orderPODo.Alias() }
 
-func (o orderDO) Columns(cols ...field.Expr) gen.Columns { return o.orderDODo.Columns(cols...) }
+func (o orderPO) Columns(cols ...field.Expr) gen.Columns { return o.orderPODo.Columns(cols...) }
 
-func (o *orderDO) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
+func (o *orderPO) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := o.fieldMap[fieldName]
 	if !ok || _f == nil {
 		return nil, false
@@ -106,7 +107,7 @@ func (o *orderDO) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	return _oe, ok
 }
 
-func (o *orderDO) fillFieldMap() {
+func (o *orderPO) fillFieldMap() {
 	o.fieldMap = make(map[string]field.Expr, 10)
 	o.fieldMap["id"] = o.ID
 	o.fieldMap["create_time"] = o.CreateTime
@@ -120,131 +121,131 @@ func (o *orderDO) fillFieldMap() {
 	o.fieldMap["status"] = o.Status
 }
 
-func (o orderDO) clone(db *gorm.DB) orderDO {
-	o.orderDODo.ReplaceConnPool(db.Statement.ConnPool)
+func (o orderPO) clone(db *gorm.DB) orderPO {
+	o.orderPODo.ReplaceConnPool(db.Statement.ConnPool)
 	return o
 }
 
-func (o orderDO) replaceDB(db *gorm.DB) orderDO {
-	o.orderDODo.ReplaceDB(db)
+func (o orderPO) replaceDB(db *gorm.DB) orderPO {
+	o.orderPODo.ReplaceDB(db)
 	return o
 }
 
-type orderDODo struct{ gen.DO }
+type orderPODo struct{ gen.DO }
 
-func (o orderDODo) Debug() *orderDODo {
+func (o orderPODo) Debug() *orderPODo {
 	return o.withDO(o.DO.Debug())
 }
 
-func (o orderDODo) WithContext(ctx context.Context) *orderDODo {
+func (o orderPODo) WithContext(ctx context.Context) *orderPODo {
 	return o.withDO(o.DO.WithContext(ctx))
 }
 
-func (o orderDODo) ReadDB() *orderDODo {
+func (o orderPODo) ReadDB() *orderPODo {
 	return o.Clauses(dbresolver.Read)
 }
 
-func (o orderDODo) WriteDB() *orderDODo {
+func (o orderPODo) WriteDB() *orderPODo {
 	return o.Clauses(dbresolver.Write)
 }
 
-func (o orderDODo) Session(config *gorm.Session) *orderDODo {
+func (o orderPODo) Session(config *gorm.Session) *orderPODo {
 	return o.withDO(o.DO.Session(config))
 }
 
-func (o orderDODo) Clauses(conds ...clause.Expression) *orderDODo {
+func (o orderPODo) Clauses(conds ...clause.Expression) *orderPODo {
 	return o.withDO(o.DO.Clauses(conds...))
 }
 
-func (o orderDODo) Returning(value interface{}, columns ...string) *orderDODo {
+func (o orderPODo) Returning(value interface{}, columns ...string) *orderPODo {
 	return o.withDO(o.DO.Returning(value, columns...))
 }
 
-func (o orderDODo) Not(conds ...gen.Condition) *orderDODo {
+func (o orderPODo) Not(conds ...gen.Condition) *orderPODo {
 	return o.withDO(o.DO.Not(conds...))
 }
 
-func (o orderDODo) Or(conds ...gen.Condition) *orderDODo {
+func (o orderPODo) Or(conds ...gen.Condition) *orderPODo {
 	return o.withDO(o.DO.Or(conds...))
 }
 
-func (o orderDODo) Select(conds ...field.Expr) *orderDODo {
+func (o orderPODo) Select(conds ...field.Expr) *orderPODo {
 	return o.withDO(o.DO.Select(conds...))
 }
 
-func (o orderDODo) Where(conds ...gen.Condition) *orderDODo {
+func (o orderPODo) Where(conds ...gen.Condition) *orderPODo {
 	return o.withDO(o.DO.Where(conds...))
 }
 
-func (o orderDODo) Order(conds ...field.Expr) *orderDODo {
+func (o orderPODo) Order(conds ...field.Expr) *orderPODo {
 	return o.withDO(o.DO.Order(conds...))
 }
 
-func (o orderDODo) Distinct(cols ...field.Expr) *orderDODo {
+func (o orderPODo) Distinct(cols ...field.Expr) *orderPODo {
 	return o.withDO(o.DO.Distinct(cols...))
 }
 
-func (o orderDODo) Omit(cols ...field.Expr) *orderDODo {
+func (o orderPODo) Omit(cols ...field.Expr) *orderPODo {
 	return o.withDO(o.DO.Omit(cols...))
 }
 
-func (o orderDODo) Join(table schema.Tabler, on ...field.Expr) *orderDODo {
+func (o orderPODo) Join(table schema.Tabler, on ...field.Expr) *orderPODo {
 	return o.withDO(o.DO.Join(table, on...))
 }
 
-func (o orderDODo) LeftJoin(table schema.Tabler, on ...field.Expr) *orderDODo {
+func (o orderPODo) LeftJoin(table schema.Tabler, on ...field.Expr) *orderPODo {
 	return o.withDO(o.DO.LeftJoin(table, on...))
 }
 
-func (o orderDODo) RightJoin(table schema.Tabler, on ...field.Expr) *orderDODo {
+func (o orderPODo) RightJoin(table schema.Tabler, on ...field.Expr) *orderPODo {
 	return o.withDO(o.DO.RightJoin(table, on...))
 }
 
-func (o orderDODo) Group(cols ...field.Expr) *orderDODo {
+func (o orderPODo) Group(cols ...field.Expr) *orderPODo {
 	return o.withDO(o.DO.Group(cols...))
 }
 
-func (o orderDODo) Having(conds ...gen.Condition) *orderDODo {
+func (o orderPODo) Having(conds ...gen.Condition) *orderPODo {
 	return o.withDO(o.DO.Having(conds...))
 }
 
-func (o orderDODo) Limit(limit int) *orderDODo {
+func (o orderPODo) Limit(limit int) *orderPODo {
 	return o.withDO(o.DO.Limit(limit))
 }
 
-func (o orderDODo) Offset(offset int) *orderDODo {
+func (o orderPODo) Offset(offset int) *orderPODo {
 	return o.withDO(o.DO.Offset(offset))
 }
 
-func (o orderDODo) Scopes(funcs ...func(gen.Dao) gen.Dao) *orderDODo {
+func (o orderPODo) Scopes(funcs ...func(gen.Dao) gen.Dao) *orderPODo {
 	return o.withDO(o.DO.Scopes(funcs...))
 }
 
-func (o orderDODo) Unscoped() *orderDODo {
+func (o orderPODo) Unscoped() *orderPODo {
 	return o.withDO(o.DO.Unscoped())
 }
 
-func (o orderDODo) Create(values ...*po.OrderPO) error {
+func (o orderPODo) Create(values ...*po.OrderPO) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return o.DO.Create(values)
 }
 
-func (o orderDODo) CreateInBatches(values []*po.OrderPO, batchSize int) error {
+func (o orderPODo) CreateInBatches(values []*po.OrderPO, batchSize int) error {
 	return o.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (o orderDODo) Save(values ...*po.OrderPO) error {
+func (o orderPODo) Save(values ...*po.OrderPO) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return o.DO.Save(values)
 }
 
-func (o orderDODo) First() (*po.OrderPO, error) {
+func (o orderPODo) First() (*po.OrderPO, error) {
 	if result, err := o.DO.First(); err != nil {
 		return nil, err
 	} else {
@@ -252,7 +253,7 @@ func (o orderDODo) First() (*po.OrderPO, error) {
 	}
 }
 
-func (o orderDODo) Take() (*po.OrderPO, error) {
+func (o orderPODo) Take() (*po.OrderPO, error) {
 	if result, err := o.DO.Take(); err != nil {
 		return nil, err
 	} else {
@@ -260,7 +261,7 @@ func (o orderDODo) Take() (*po.OrderPO, error) {
 	}
 }
 
-func (o orderDODo) Last() (*po.OrderPO, error) {
+func (o orderPODo) Last() (*po.OrderPO, error) {
 	if result, err := o.DO.Last(); err != nil {
 		return nil, err
 	} else {
@@ -268,12 +269,12 @@ func (o orderDODo) Last() (*po.OrderPO, error) {
 	}
 }
 
-func (o orderDODo) Find() ([]*po.OrderPO, error) {
+func (o orderPODo) Find() ([]*po.OrderPO, error) {
 	result, err := o.DO.Find()
 	return result.([]*po.OrderPO), err
 }
 
-func (o orderDODo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*po.OrderPO, err error) {
+func (o orderPODo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*po.OrderPO, err error) {
 	buf := make([]*po.OrderPO, 0, batchSize)
 	err = o.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
@@ -282,33 +283,33 @@ func (o orderDODo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) err
 	return results, err
 }
 
-func (o orderDODo) FindInBatches(result *[]*po.OrderPO, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (o orderPODo) FindInBatches(result *[]*po.OrderPO, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return o.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (o orderDODo) Attrs(attrs ...field.AssignExpr) *orderDODo {
+func (o orderPODo) Attrs(attrs ...field.AssignExpr) *orderPODo {
 	return o.withDO(o.DO.Attrs(attrs...))
 }
 
-func (o orderDODo) Assign(attrs ...field.AssignExpr) *orderDODo {
+func (o orderPODo) Assign(attrs ...field.AssignExpr) *orderPODo {
 	return o.withDO(o.DO.Assign(attrs...))
 }
 
-func (o orderDODo) Joins(fields ...field.RelationField) *orderDODo {
+func (o orderPODo) Joins(fields ...field.RelationField) *orderPODo {
 	for _, _f := range fields {
 		o = *o.withDO(o.DO.Joins(_f))
 	}
 	return &o
 }
 
-func (o orderDODo) Preload(fields ...field.RelationField) *orderDODo {
+func (o orderPODo) Preload(fields ...field.RelationField) *orderPODo {
 	for _, _f := range fields {
 		o = *o.withDO(o.DO.Preload(_f))
 	}
 	return &o
 }
 
-func (o orderDODo) FirstOrInit() (*po.OrderPO, error) {
+func (o orderPODo) FirstOrInit() (*po.OrderPO, error) {
 	if result, err := o.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
@@ -316,7 +317,7 @@ func (o orderDODo) FirstOrInit() (*po.OrderPO, error) {
 	}
 }
 
-func (o orderDODo) FirstOrCreate() (*po.OrderPO, error) {
+func (o orderPODo) FirstOrCreate() (*po.OrderPO, error) {
 	if result, err := o.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
@@ -324,7 +325,7 @@ func (o orderDODo) FirstOrCreate() (*po.OrderPO, error) {
 	}
 }
 
-func (o orderDODo) FindByPage(offset int, limit int) (result []*po.OrderPO, count int64, err error) {
+func (o orderPODo) FindByPage(offset int, limit int) (result []*po.OrderPO, count int64, err error) {
 	result, err = o.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -339,7 +340,7 @@ func (o orderDODo) FindByPage(offset int, limit int) (result []*po.OrderPO, coun
 	return
 }
 
-func (o orderDODo) ScanByPage(result interface{}, offset int, limit int) (count int64, err error) {
+func (o orderPODo) ScanByPage(result interface{}, offset int, limit int) (count int64, err error) {
 	count, err = o.Count()
 	if err != nil {
 		return
@@ -349,15 +350,15 @@ func (o orderDODo) ScanByPage(result interface{}, offset int, limit int) (count 
 	return
 }
 
-func (o orderDODo) Scan(result interface{}) (err error) {
+func (o orderPODo) Scan(result interface{}) (err error) {
 	return o.DO.Scan(result)
 }
 
-func (o orderDODo) Delete(models ...*po.OrderPO) (result gen.ResultInfo, err error) {
+func (o orderPODo) Delete(models ...*po.OrderPO) (result gen.ResultInfo, err error) {
 	return o.DO.Delete(models)
 }
 
-func (o *orderDODo) withDO(do gen.Dao) *orderDODo {
+func (o *orderPODo) withDO(do gen.Dao) *orderPODo {
 	o.DO = *do.(*gen.DO)
 	return o
 }

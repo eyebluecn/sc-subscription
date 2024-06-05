@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const TableNameOrderDO = "scs_order"
+const TableNameOrderPO = "scs_order"
 
 // OrderPO 订单表
 type OrderPO struct {
@@ -26,5 +26,5 @@ type OrderPO struct {
 
 // TableName OrderPO's table name
 func (*OrderPO) TableName() string {
-	return TableNameOrderDO
+	return TableNameOrderPO
 }

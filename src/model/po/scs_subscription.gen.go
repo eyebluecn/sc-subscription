@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const TableNameSubscriptionDO = "scs_subscription"
+const TableNameSubscriptionPO = "scs_subscription"
 
 // SubscriptionPO 订阅表
 type SubscriptionPO struct {
@@ -23,5 +23,5 @@ type SubscriptionPO struct {
 
 // TableName SubscriptionPO's table name
 func (*SubscriptionPO) TableName() string {
-	return TableNameSubscriptionDO
+	return TableNameSubscriptionPO
 }

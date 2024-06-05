@@ -6,7 +6,6 @@ package dao
 
 import (
 	"context"
-	"github.com/eyebluecn/sc-misc/src/model/po"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -16,32 +15,34 @@ import (
 	"gorm.io/gen/field"
 
 	"gorm.io/plugin/dbresolver"
+
+	"github.com/eyebluecn/sc-misc/src/model/po"
 )
 
-func newSubscriptionDO(db *gorm.DB, opts ...gen.DOOption) subscriptionDO {
-	_subscriptionDO := subscriptionDO{}
+func newSubscriptionPO(db *gorm.DB, opts ...gen.DOOption) subscriptionPO {
+	_subscriptionPO := subscriptionPO{}
 
-	_subscriptionDO.subscriptionDODo.UseDB(db, opts...)
-	_subscriptionDO.subscriptionDODo.UseModel(&po.SubscriptionPO{})
+	_subscriptionPO.subscriptionPODo.UseDB(db, opts...)
+	_subscriptionPO.subscriptionPODo.UseModel(&po.SubscriptionPO{})
 
-	tableName := _subscriptionDO.subscriptionDODo.TableName()
-	_subscriptionDO.ALL = field.NewAsterisk(tableName)
-	_subscriptionDO.ID = field.NewInt64(tableName, "id")
-	_subscriptionDO.CreateTime = field.NewTime(tableName, "create_time")
-	_subscriptionDO.UpdateTime = field.NewTime(tableName, "update_time")
-	_subscriptionDO.ReaderID = field.NewInt64(tableName, "reader_id")
-	_subscriptionDO.ColumnID = field.NewInt64(tableName, "column_id")
-	_subscriptionDO.OrderID = field.NewInt64(tableName, "order_id")
-	_subscriptionDO.Status = field.NewInt32(tableName, "status")
+	tableName := _subscriptionPO.subscriptionPODo.TableName()
+	_subscriptionPO.ALL = field.NewAsterisk(tableName)
+	_subscriptionPO.ID = field.NewInt64(tableName, "id")
+	_subscriptionPO.CreateTime = field.NewTime(tableName, "create_time")
+	_subscriptionPO.UpdateTime = field.NewTime(tableName, "update_time")
+	_subscriptionPO.ReaderID = field.NewInt64(tableName, "reader_id")
+	_subscriptionPO.ColumnID = field.NewInt64(tableName, "column_id")
+	_subscriptionPO.OrderID = field.NewInt64(tableName, "order_id")
+	_subscriptionPO.Status = field.NewInt32(tableName, "status")
 
-	_subscriptionDO.fillFieldMap()
+	_subscriptionPO.fillFieldMap()
 
-	return _subscriptionDO
+	return _subscriptionPO
 }
 
-// subscriptionDO 订阅表
-type subscriptionDO struct {
-	subscriptionDODo subscriptionDODo
+// subscriptionPO 订阅表
+type subscriptionPO struct {
+	subscriptionPODo subscriptionPODo
 
 	ALL        field.Asterisk
 	ID         field.Int64 // 主键
@@ -55,17 +56,17 @@ type subscriptionDO struct {
 	fieldMap map[string]field.Expr
 }
 
-func (s subscriptionDO) Table(newTableName string) *subscriptionDO {
-	s.subscriptionDODo.UseTable(newTableName)
+func (s subscriptionPO) Table(newTableName string) *subscriptionPO {
+	s.subscriptionPODo.UseTable(newTableName)
 	return s.updateTableName(newTableName)
 }
 
-func (s subscriptionDO) As(alias string) *subscriptionDO {
-	s.subscriptionDODo.DO = *(s.subscriptionDODo.As(alias).(*gen.DO))
+func (s subscriptionPO) As(alias string) *subscriptionPO {
+	s.subscriptionPODo.DO = *(s.subscriptionPODo.As(alias).(*gen.DO))
 	return s.updateTableName(alias)
 }
 
-func (s *subscriptionDO) updateTableName(table string) *subscriptionDO {
+func (s *subscriptionPO) updateTableName(table string) *subscriptionPO {
 	s.ALL = field.NewAsterisk(table)
 	s.ID = field.NewInt64(table, "id")
 	s.CreateTime = field.NewTime(table, "create_time")
@@ -80,19 +81,19 @@ func (s *subscriptionDO) updateTableName(table string) *subscriptionDO {
 	return s
 }
 
-func (s *subscriptionDO) WithContext(ctx context.Context) *subscriptionDODo {
-	return s.subscriptionDODo.WithContext(ctx)
+func (s *subscriptionPO) WithContext(ctx context.Context) *subscriptionPODo {
+	return s.subscriptionPODo.WithContext(ctx)
 }
 
-func (s subscriptionDO) TableName() string { return s.subscriptionDODo.TableName() }
+func (s subscriptionPO) TableName() string { return s.subscriptionPODo.TableName() }
 
-func (s subscriptionDO) Alias() string { return s.subscriptionDODo.Alias() }
+func (s subscriptionPO) Alias() string { return s.subscriptionPODo.Alias() }
 
-func (s subscriptionDO) Columns(cols ...field.Expr) gen.Columns {
-	return s.subscriptionDODo.Columns(cols...)
+func (s subscriptionPO) Columns(cols ...field.Expr) gen.Columns {
+	return s.subscriptionPODo.Columns(cols...)
 }
 
-func (s *subscriptionDO) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
+func (s *subscriptionPO) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := s.fieldMap[fieldName]
 	if !ok || _f == nil {
 		return nil, false
@@ -101,7 +102,7 @@ func (s *subscriptionDO) GetFieldByName(fieldName string) (field.OrderExpr, bool
 	return _oe, ok
 }
 
-func (s *subscriptionDO) fillFieldMap() {
+func (s *subscriptionPO) fillFieldMap() {
 	s.fieldMap = make(map[string]field.Expr, 7)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["create_time"] = s.CreateTime
@@ -112,131 +113,131 @@ func (s *subscriptionDO) fillFieldMap() {
 	s.fieldMap["status"] = s.Status
 }
 
-func (s subscriptionDO) clone(db *gorm.DB) subscriptionDO {
-	s.subscriptionDODo.ReplaceConnPool(db.Statement.ConnPool)
+func (s subscriptionPO) clone(db *gorm.DB) subscriptionPO {
+	s.subscriptionPODo.ReplaceConnPool(db.Statement.ConnPool)
 	return s
 }
 
-func (s subscriptionDO) replaceDB(db *gorm.DB) subscriptionDO {
-	s.subscriptionDODo.ReplaceDB(db)
+func (s subscriptionPO) replaceDB(db *gorm.DB) subscriptionPO {
+	s.subscriptionPODo.ReplaceDB(db)
 	return s
 }
 
-type subscriptionDODo struct{ gen.DO }
+type subscriptionPODo struct{ gen.DO }
 
-func (s subscriptionDODo) Debug() *subscriptionDODo {
+func (s subscriptionPODo) Debug() *subscriptionPODo {
 	return s.withDO(s.DO.Debug())
 }
 
-func (s subscriptionDODo) WithContext(ctx context.Context) *subscriptionDODo {
+func (s subscriptionPODo) WithContext(ctx context.Context) *subscriptionPODo {
 	return s.withDO(s.DO.WithContext(ctx))
 }
 
-func (s subscriptionDODo) ReadDB() *subscriptionDODo {
+func (s subscriptionPODo) ReadDB() *subscriptionPODo {
 	return s.Clauses(dbresolver.Read)
 }
 
-func (s subscriptionDODo) WriteDB() *subscriptionDODo {
+func (s subscriptionPODo) WriteDB() *subscriptionPODo {
 	return s.Clauses(dbresolver.Write)
 }
 
-func (s subscriptionDODo) Session(config *gorm.Session) *subscriptionDODo {
+func (s subscriptionPODo) Session(config *gorm.Session) *subscriptionPODo {
 	return s.withDO(s.DO.Session(config))
 }
 
-func (s subscriptionDODo) Clauses(conds ...clause.Expression) *subscriptionDODo {
+func (s subscriptionPODo) Clauses(conds ...clause.Expression) *subscriptionPODo {
 	return s.withDO(s.DO.Clauses(conds...))
 }
 
-func (s subscriptionDODo) Returning(value interface{}, columns ...string) *subscriptionDODo {
+func (s subscriptionPODo) Returning(value interface{}, columns ...string) *subscriptionPODo {
 	return s.withDO(s.DO.Returning(value, columns...))
 }
 
-func (s subscriptionDODo) Not(conds ...gen.Condition) *subscriptionDODo {
+func (s subscriptionPODo) Not(conds ...gen.Condition) *subscriptionPODo {
 	return s.withDO(s.DO.Not(conds...))
 }
 
-func (s subscriptionDODo) Or(conds ...gen.Condition) *subscriptionDODo {
+func (s subscriptionPODo) Or(conds ...gen.Condition) *subscriptionPODo {
 	return s.withDO(s.DO.Or(conds...))
 }
 
-func (s subscriptionDODo) Select(conds ...field.Expr) *subscriptionDODo {
+func (s subscriptionPODo) Select(conds ...field.Expr) *subscriptionPODo {
 	return s.withDO(s.DO.Select(conds...))
 }
 
-func (s subscriptionDODo) Where(conds ...gen.Condition) *subscriptionDODo {
+func (s subscriptionPODo) Where(conds ...gen.Condition) *subscriptionPODo {
 	return s.withDO(s.DO.Where(conds...))
 }
 
-func (s subscriptionDODo) Order(conds ...field.Expr) *subscriptionDODo {
+func (s subscriptionPODo) Order(conds ...field.Expr) *subscriptionPODo {
 	return s.withDO(s.DO.Order(conds...))
 }
 
-func (s subscriptionDODo) Distinct(cols ...field.Expr) *subscriptionDODo {
+func (s subscriptionPODo) Distinct(cols ...field.Expr) *subscriptionPODo {
 	return s.withDO(s.DO.Distinct(cols...))
 }
 
-func (s subscriptionDODo) Omit(cols ...field.Expr) *subscriptionDODo {
+func (s subscriptionPODo) Omit(cols ...field.Expr) *subscriptionPODo {
 	return s.withDO(s.DO.Omit(cols...))
 }
 
-func (s subscriptionDODo) Join(table schema.Tabler, on ...field.Expr) *subscriptionDODo {
+func (s subscriptionPODo) Join(table schema.Tabler, on ...field.Expr) *subscriptionPODo {
 	return s.withDO(s.DO.Join(table, on...))
 }
 
-func (s subscriptionDODo) LeftJoin(table schema.Tabler, on ...field.Expr) *subscriptionDODo {
+func (s subscriptionPODo) LeftJoin(table schema.Tabler, on ...field.Expr) *subscriptionPODo {
 	return s.withDO(s.DO.LeftJoin(table, on...))
 }
 
-func (s subscriptionDODo) RightJoin(table schema.Tabler, on ...field.Expr) *subscriptionDODo {
+func (s subscriptionPODo) RightJoin(table schema.Tabler, on ...field.Expr) *subscriptionPODo {
 	return s.withDO(s.DO.RightJoin(table, on...))
 }
 
-func (s subscriptionDODo) Group(cols ...field.Expr) *subscriptionDODo {
+func (s subscriptionPODo) Group(cols ...field.Expr) *subscriptionPODo {
 	return s.withDO(s.DO.Group(cols...))
 }
 
-func (s subscriptionDODo) Having(conds ...gen.Condition) *subscriptionDODo {
+func (s subscriptionPODo) Having(conds ...gen.Condition) *subscriptionPODo {
 	return s.withDO(s.DO.Having(conds...))
 }
 
-func (s subscriptionDODo) Limit(limit int) *subscriptionDODo {
+func (s subscriptionPODo) Limit(limit int) *subscriptionPODo {
 	return s.withDO(s.DO.Limit(limit))
 }
 
-func (s subscriptionDODo) Offset(offset int) *subscriptionDODo {
+func (s subscriptionPODo) Offset(offset int) *subscriptionPODo {
 	return s.withDO(s.DO.Offset(offset))
 }
 
-func (s subscriptionDODo) Scopes(funcs ...func(gen.Dao) gen.Dao) *subscriptionDODo {
+func (s subscriptionPODo) Scopes(funcs ...func(gen.Dao) gen.Dao) *subscriptionPODo {
 	return s.withDO(s.DO.Scopes(funcs...))
 }
 
-func (s subscriptionDODo) Unscoped() *subscriptionDODo {
+func (s subscriptionPODo) Unscoped() *subscriptionPODo {
 	return s.withDO(s.DO.Unscoped())
 }
 
-func (s subscriptionDODo) Create(values ...*po.SubscriptionPO) error {
+func (s subscriptionPODo) Create(values ...*po.SubscriptionPO) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return s.DO.Create(values)
 }
 
-func (s subscriptionDODo) CreateInBatches(values []*po.SubscriptionPO, batchSize int) error {
+func (s subscriptionPODo) CreateInBatches(values []*po.SubscriptionPO, batchSize int) error {
 	return s.DO.CreateInBatches(values, batchSize)
 }
 
 // Save : !!! underlying implementation is different with GORM
 // The method is equivalent to executing the statement: db.Clauses(clause.OnConflict{UpdateAll: true}).Create(values)
-func (s subscriptionDODo) Save(values ...*po.SubscriptionPO) error {
+func (s subscriptionPODo) Save(values ...*po.SubscriptionPO) error {
 	if len(values) == 0 {
 		return nil
 	}
 	return s.DO.Save(values)
 }
 
-func (s subscriptionDODo) First() (*po.SubscriptionPO, error) {
+func (s subscriptionPODo) First() (*po.SubscriptionPO, error) {
 	if result, err := s.DO.First(); err != nil {
 		return nil, err
 	} else {
@@ -244,7 +245,7 @@ func (s subscriptionDODo) First() (*po.SubscriptionPO, error) {
 	}
 }
 
-func (s subscriptionDODo) Take() (*po.SubscriptionPO, error) {
+func (s subscriptionPODo) Take() (*po.SubscriptionPO, error) {
 	if result, err := s.DO.Take(); err != nil {
 		return nil, err
 	} else {
@@ -252,7 +253,7 @@ func (s subscriptionDODo) Take() (*po.SubscriptionPO, error) {
 	}
 }
 
-func (s subscriptionDODo) Last() (*po.SubscriptionPO, error) {
+func (s subscriptionPODo) Last() (*po.SubscriptionPO, error) {
 	if result, err := s.DO.Last(); err != nil {
 		return nil, err
 	} else {
@@ -260,12 +261,12 @@ func (s subscriptionDODo) Last() (*po.SubscriptionPO, error) {
 	}
 }
 
-func (s subscriptionDODo) Find() ([]*po.SubscriptionPO, error) {
+func (s subscriptionPODo) Find() ([]*po.SubscriptionPO, error) {
 	result, err := s.DO.Find()
 	return result.([]*po.SubscriptionPO), err
 }
 
-func (s subscriptionDODo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*po.SubscriptionPO, err error) {
+func (s subscriptionPODo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch int) error) (results []*po.SubscriptionPO, err error) {
 	buf := make([]*po.SubscriptionPO, 0, batchSize)
 	err = s.DO.FindInBatches(&buf, batchSize, func(tx gen.Dao, batch int) error {
 		defer func() { results = append(results, buf...) }()
@@ -274,33 +275,33 @@ func (s subscriptionDODo) FindInBatch(batchSize int, fc func(tx gen.Dao, batch i
 	return results, err
 }
 
-func (s subscriptionDODo) FindInBatches(result *[]*po.SubscriptionPO, batchSize int, fc func(tx gen.Dao, batch int) error) error {
+func (s subscriptionPODo) FindInBatches(result *[]*po.SubscriptionPO, batchSize int, fc func(tx gen.Dao, batch int) error) error {
 	return s.DO.FindInBatches(result, batchSize, fc)
 }
 
-func (s subscriptionDODo) Attrs(attrs ...field.AssignExpr) *subscriptionDODo {
+func (s subscriptionPODo) Attrs(attrs ...field.AssignExpr) *subscriptionPODo {
 	return s.withDO(s.DO.Attrs(attrs...))
 }
 
-func (s subscriptionDODo) Assign(attrs ...field.AssignExpr) *subscriptionDODo {
+func (s subscriptionPODo) Assign(attrs ...field.AssignExpr) *subscriptionPODo {
 	return s.withDO(s.DO.Assign(attrs...))
 }
 
-func (s subscriptionDODo) Joins(fields ...field.RelationField) *subscriptionDODo {
+func (s subscriptionPODo) Joins(fields ...field.RelationField) *subscriptionPODo {
 	for _, _f := range fields {
 		s = *s.withDO(s.DO.Joins(_f))
 	}
 	return &s
 }
 
-func (s subscriptionDODo) Preload(fields ...field.RelationField) *subscriptionDODo {
+func (s subscriptionPODo) Preload(fields ...field.RelationField) *subscriptionPODo {
 	for _, _f := range fields {
 		s = *s.withDO(s.DO.Preload(_f))
 	}
 	return &s
 }
 
-func (s subscriptionDODo) FirstOrInit() (*po.SubscriptionPO, error) {
+func (s subscriptionPODo) FirstOrInit() (*po.SubscriptionPO, error) {
 	if result, err := s.DO.FirstOrInit(); err != nil {
 		return nil, err
 	} else {
@@ -308,7 +309,7 @@ func (s subscriptionDODo) FirstOrInit() (*po.SubscriptionPO, error) {
 	}
 }
 
-func (s subscriptionDODo) FirstOrCreate() (*po.SubscriptionPO, error) {
+func (s subscriptionPODo) FirstOrCreate() (*po.SubscriptionPO, error) {
 	if result, err := s.DO.FirstOrCreate(); err != nil {
 		return nil, err
 	} else {
@@ -316,7 +317,7 @@ func (s subscriptionDODo) FirstOrCreate() (*po.SubscriptionPO, error) {
 	}
 }
 
-func (s subscriptionDODo) FindByPage(offset int, limit int) (result []*po.SubscriptionPO, count int64, err error) {
+func (s subscriptionPODo) FindByPage(offset int, limit int) (result []*po.SubscriptionPO, count int64, err error) {
 	result, err = s.Offset(offset).Limit(limit).Find()
 	if err != nil {
 		return
@@ -331,7 +332,7 @@ func (s subscriptionDODo) FindByPage(offset int, limit int) (result []*po.Subscr
 	return
 }
 
-func (s subscriptionDODo) ScanByPage(result interface{}, offset int, limit int) (count int64, err error) {
+func (s subscriptionPODo) ScanByPage(result interface{}, offset int, limit int) (count int64, err error) {
 	count, err = s.Count()
 	if err != nil {
 		return
@@ -341,15 +342,15 @@ func (s subscriptionDODo) ScanByPage(result interface{}, offset int, limit int) 
 	return
 }
 
-func (s subscriptionDODo) Scan(result interface{}) (err error) {
+func (s subscriptionPODo) Scan(result interface{}) (err error) {
 	return s.DO.Scan(result)
 }
 
-func (s subscriptionDODo) Delete(models ...*po.SubscriptionPO) (result gen.ResultInfo, err error) {
+func (s subscriptionPODo) Delete(models ...*po.SubscriptionPO) (result gen.ResultInfo, err error) {
 	return s.DO.Delete(models)
 }
 
-func (s *subscriptionDODo) withDO(do gen.Dao) *subscriptionDODo {
+func (s *subscriptionPODo) withDO(do gen.Dao) *subscriptionPODo {
 	s.DO = *do.(*gen.DO)
 	return s
 }

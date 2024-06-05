@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/eyebluecn/sc-misc/src/common/config"
+	"github.com/eyebluecn/sc-misc/src/util"
 	"gorm.io/gen"
 	"os"
 
@@ -20,6 +21,11 @@ func main() {
 	modelPkgPath := os.Getenv("MODEL_PKG_PATH")
 	if modelPkgPath == "" {
 		modelPkgPath = "src/model/po"
+	}
+
+	//在windows环境，是按照相对路径来识别的。
+	if util.IsWindows() {
+		modelPkgPath = "../model/po"
 	}
 
 	generator := gen.NewGenerator(gen.Config{

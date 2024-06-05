@@ -17,29 +17,29 @@ import (
 
 var (
 	Q              = new(Query)
-	OrderDO        *orderDO
-	SubscriptionDO *subscriptionDO
+	OrderPO        *orderPO
+	SubscriptionPO *subscriptionPO
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
-	OrderDO = &Q.OrderDO
-	SubscriptionDO = &Q.SubscriptionDO
+	OrderPO = &Q.OrderPO
+	SubscriptionPO = &Q.SubscriptionPO
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:             db,
-		OrderDO:        newOrderDO(db, opts...),
-		SubscriptionDO: newSubscriptionDO(db, opts...),
+		OrderPO:        newOrderPO(db, opts...),
+		SubscriptionPO: newSubscriptionPO(db, opts...),
 	}
 }
 
 type Query struct {
 	db *gorm.DB
 
-	OrderDO        orderDO
-	SubscriptionDO subscriptionDO
+	OrderPO        orderPO
+	SubscriptionPO subscriptionPO
 }
 
 func (q *Query) Available() bool { return q.db != nil }
@@ -47,8 +47,8 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:             db,
-		OrderDO:        q.OrderDO.clone(db),
-		SubscriptionDO: q.SubscriptionDO.clone(db),
+		OrderPO:        q.OrderPO.clone(db),
+		SubscriptionPO: q.SubscriptionPO.clone(db),
 	}
 }
 
@@ -63,20 +63,20 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:             db,
-		OrderDO:        q.OrderDO.replaceDB(db),
-		SubscriptionDO: q.SubscriptionDO.replaceDB(db),
+		OrderPO:        q.OrderPO.replaceDB(db),
+		SubscriptionPO: q.SubscriptionPO.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
-	OrderDO        *orderDODo
-	SubscriptionDO *subscriptionDODo
+	OrderPO        *orderPODo
+	SubscriptionPO *subscriptionPODo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
-		OrderDO:        q.OrderDO.WithContext(ctx),
-		SubscriptionDO: q.SubscriptionDO.WithContext(ctx),
+		OrderPO:        q.OrderPO.WithContext(ctx),
+		SubscriptionPO: q.SubscriptionPO.WithContext(ctx),
 	}
 }
 
