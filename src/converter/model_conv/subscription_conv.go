@@ -2,7 +2,7 @@ package model_conv
 
 import (
 	"github.com/eyebluecn/sc-misc/src/model"
-	"github.com/eyebluecn/sc-misc/src/repository/db_model"
+	"github.com/eyebluecn/sc-misc/src/model/po"
 	"github.com/eyebluecn/sc-subscription-idl/kitex_gen/sc_subscription_api"
 )
 
@@ -21,7 +21,7 @@ func ConvertSubscriptionStatusPtr(status *sc_subscription_api.SubscriptionStatus
 }
 
 // 数据库模型转换为领域模型
-func ConvertSubscription(thing *db_model.SubscriptionDO) *model.Subscription {
+func ConvertSubscription(thing *po.SubscriptionPO) *model.Subscription {
 	if thing == nil {
 		return nil
 	}
@@ -38,7 +38,7 @@ func ConvertSubscription(thing *db_model.SubscriptionDO) *model.Subscription {
 }
 
 // 数据库模型转换为领域模型
-func ConvertSubscriptions(things []*db_model.SubscriptionDO) []*model.Subscription {
+func ConvertSubscriptions(things []*po.SubscriptionPO) []*model.Subscription {
 	if things == nil {
 		return nil
 	}

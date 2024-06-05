@@ -2,7 +2,7 @@ package model_conv
 
 import (
 	"github.com/eyebluecn/sc-misc/src/model"
-	"github.com/eyebluecn/sc-misc/src/repository/db_model"
+	"github.com/eyebluecn/sc-misc/src/model/po"
 )
 
 // 转为枚举
@@ -11,7 +11,7 @@ func ConvertOrderStatus(status int32) model.OrderStatus {
 }
 
 // 数据库模型转换为领域模型
-func ConvertOrder(thing *db_model.OrderDO) *model.Order {
+func ConvertOrder(thing *po.OrderPO) *model.Order {
 	if thing == nil {
 		return nil
 	}
@@ -31,7 +31,7 @@ func ConvertOrder(thing *db_model.OrderDO) *model.Order {
 }
 
 // 数据库模型转换为领域模型
-func ConvertOrders(things []*db_model.OrderDO) []*model.Order {
+func ConvertOrders(things []*po.OrderPO) []*model.Order {
 	if things == nil {
 		return nil
 	}

@@ -2,7 +2,7 @@ package db_model_conv
 
 import (
 	"github.com/eyebluecn/sc-misc/src/model"
-	"github.com/eyebluecn/sc-misc/src/repository/db_model"
+	"github.com/eyebluecn/sc-misc/src/model/po"
 )
 
 // 枚举转为存储的整数
@@ -11,12 +11,12 @@ func SubscriptionStatusToStorage(status model.SubscriptionStatus) int32 {
 }
 
 // 数据库模型转换为领域模型
-func ConvertSubscriptionDO(thing *model.Subscription) *db_model.SubscriptionDO {
+func ConvertSubscriptionDO(thing *model.Subscription) *po.SubscriptionPO {
 	if thing == nil {
 		return nil
 	}
 
-	return &db_model.SubscriptionDO{
+	return &po.SubscriptionPO{
 		ID:         thing.ID,
 		CreateTime: thing.CreateTime,
 		UpdateTime: thing.UpdateTime,
@@ -28,11 +28,11 @@ func ConvertSubscriptionDO(thing *model.Subscription) *db_model.SubscriptionDO {
 }
 
 // 数据库模型转换为领域模型
-func ConvertSubscriptionDOs(things []*model.Subscription) []*db_model.SubscriptionDO {
+func ConvertSubscriptionDOs(things []*model.Subscription) []*po.SubscriptionPO {
 	if things == nil {
 		return nil
 	}
-	var results []*db_model.SubscriptionDO
+	var results []*po.SubscriptionPO
 	for _, item := range things {
 		results = append(results, ConvertSubscriptionDO(item))
 	}

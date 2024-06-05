@@ -9,7 +9,7 @@ import (
 	"github.com/eyebluecn/sc-misc/src/converter/db_model_conv"
 	"github.com/eyebluecn/sc-misc/src/converter/model_conv"
 	"github.com/eyebluecn/sc-misc/src/model"
-	"github.com/eyebluecn/sc-misc/src/repository/query"
+	"github.com/eyebluecn/sc-misc/src/repository/dao"
 	"gorm.io/gen"
 	"gorm.io/gorm"
 	"time"
@@ -27,7 +27,7 @@ func (receiver SubscriptionRepo) Insert(
 	ctx context.Context,
 	payment *model.Subscription,
 ) (*model.Subscription, error) {
-	table := query.Use(config.DB).SubscriptionDO
+	table := dao.Use(config.DB).SubscriptionDO
 
 	//时间置为当前
 	payment.CreateTime = time.Now()
@@ -50,7 +50,7 @@ func (receiver SubscriptionRepo) Page(
 	req SubscriptionPageRequest,
 ) (list []*model.Subscription, pagination *model.Pagination, err error) {
 
-	table := query.Use(config.DB).SubscriptionDO
+	table := dao.Use(config.DB).SubscriptionDO
 	conditions := make([]gen.Condition, 0)
 
 	if !req.CreateTimeGte.IsZero() {
@@ -122,7 +122,7 @@ func (receiver SubscriptionRepo) QueryByReaderIdAndColumnId(
 	readerId int64,
 	columnId int64,
 ) (*model.Subscription, error) {
-	table := query.Use(config.DB).SubscriptionDO
+	table := dao.Use(config.DB).SubscriptionDO
 	conditions := make([]gen.Condition, 0)
 
 	conditions = append(conditions, table.ReaderID.Eq(readerId))

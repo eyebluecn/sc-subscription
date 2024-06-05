@@ -14,12 +14,12 @@ func main() {
 	ctx := context.Background()
 	outPath := os.Getenv("OUT_PATH")
 	if outPath == "" {
-		outPath = "src/repository/query"
+		outPath = "src/repository/dao"
 	}
 
 	modelPkgPath := os.Getenv("MODEL_PKG_PATH")
 	if modelPkgPath == "" {
-		modelPkgPath = "db_model"
+		modelPkgPath = "src/model/po"
 	}
 
 	generator := gen.NewGenerator(gen.Config{
@@ -36,8 +36,8 @@ func main() {
 	generator.UseDB(db)
 	generator.ApplyBasic(
 		// 表
-		generator.GenerateModelAs("scs_order", "OrderDO"),
-		generator.GenerateModelAs("scs_subscription", "SubscriptionDO"),
+		generator.GenerateModelAs("scs_order", "OrderPO"),
+		generator.GenerateModelAs("scs_subscription", "SubscriptionPO"),
 	)
 
 	generator.Execute()

@@ -2,7 +2,7 @@ package db_model_conv
 
 import (
 	"github.com/eyebluecn/sc-misc/src/model"
-	"github.com/eyebluecn/sc-misc/src/repository/db_model"
+	"github.com/eyebluecn/sc-misc/src/model/po"
 )
 
 // 枚举转为存储的整数
@@ -23,12 +23,12 @@ func OrderStatusesToStorage(things []model.OrderStatus) []int32 {
 }
 
 // 数据库模型转换为领域模型
-func ConvertOrderDO(thing *model.Order) *db_model.OrderDO {
+func ConvertOrderDO(thing *model.Order) *po.OrderPO {
 	if thing == nil {
 		return nil
 	}
 
-	return &db_model.OrderDO{
+	return &po.OrderPO{
 		ID:            thing.ID,
 		CreateTime:    thing.CreateTime,
 		UpdateTime:    thing.UpdateTime,
@@ -43,11 +43,11 @@ func ConvertOrderDO(thing *model.Order) *db_model.OrderDO {
 }
 
 // 数据库模型转换为领域模型
-func ConvertOrderDOs(things []*model.Order) []*db_model.OrderDO {
+func ConvertOrderDOs(things []*model.Order) []*po.OrderPO {
 	if things == nil {
 		return nil
 	}
-	var results []*db_model.OrderDO
+	var results []*po.OrderPO
 	for _, item := range things {
 		results = append(results, ConvertOrderDO(item))
 	}

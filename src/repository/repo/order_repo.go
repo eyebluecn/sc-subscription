@@ -11,7 +11,7 @@ import (
 	"github.com/eyebluecn/sc-misc/src/converter/db_model_conv"
 	"github.com/eyebluecn/sc-misc/src/converter/model_conv"
 	"github.com/eyebluecn/sc-misc/src/model"
-	"github.com/eyebluecn/sc-misc/src/repository/query"
+	"github.com/eyebluecn/sc-misc/src/repository/dao"
 	"gorm.io/gen"
 	"gorm.io/gorm"
 	"time"
@@ -29,7 +29,7 @@ func (receiver OrderRepo) Insert(
 	ctx context.Context,
 	payment *model.Order,
 ) (*model.Order, error) {
-	table := query.Use(config.DB).OrderDO
+	table := dao.Use(config.DB).OrderDO
 
 	//时间置为当前
 	payment.CreateTime = time.Now()
@@ -52,7 +52,7 @@ func (receiver OrderRepo) Page(
 	req OrderPageRequest,
 ) (list []*model.Order, pagination *model.Pagination, err error) {
 
-	table := query.Use(config.DB).OrderDO
+	table := dao.Use(config.DB).OrderDO
 	conditions := make([]gen.Condition, 0)
 
 	if req.ReaderId != nil {
@@ -103,7 +103,7 @@ func (receiver OrderRepo) QueryByNo(
 	ctx context.Context,
 	no string,
 ) (*model.Order, error) {
-	table := query.Use(config.DB).OrderDO
+	table := dao.Use(config.DB).OrderDO
 	conditions := make([]gen.Condition, 0)
 
 	conditions = append(conditions, table.No.Eq(no))
@@ -146,7 +146,7 @@ func (receiver OrderRepo) QueryByReaderIdAndColumnIdAndStatuses(
 	columnId int64,
 	statuses []model.OrderStatus,
 ) ([]*model.Order, error) {
-	table := query.Use(config.DB).OrderDO
+	table := dao.Use(config.DB).OrderDO
 	conditions := make([]gen.Condition, 0)
 
 	conditions = append(conditions, table.ReaderID.Eq(readerId))
@@ -178,7 +178,7 @@ func (receiver OrderRepo) UpdateStatus(
 	orderId int64,
 	orderStatus model.OrderStatus,
 ) (int64, error) {
-	table := query.Use(config.DB).OrderDO
+	table := dao.Use(config.DB).OrderDO
 
 	conditions := make([]gen.Condition, 0)
 
@@ -200,7 +200,7 @@ func (receiver OrderRepo) FindById(
 	ctx context.Context,
 	id int64,
 ) (*model.Order, error) {
-	table := query.Use(config.DB).OrderDO
+	table := dao.Use(config.DB).OrderDO
 
 	conditions := make([]gen.Condition, 0)
 
@@ -242,7 +242,7 @@ func (receiver OrderRepo) QueryByIds(
 	ids []int64,
 ) (list []*model.Order, err error) {
 
-	table := query.Use(config.DB).OrderDO
+	table := dao.Use(config.DB).OrderDO
 	conditions := make([]gen.Condition, 0)
 
 	if len(ids) > 0 {
